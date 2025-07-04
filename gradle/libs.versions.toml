@@ -1,0 +1,20 @@
+[versions]
+kotlin = "2.2.0"
+kotest = "5.9.1"
+spring = "6.2.8"
+springBoot = "3.5.3"
+springDoc = "2.8.9"
+
+[libraries]
+kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotestAssertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotestRunner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+springBootAutoConfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "springBoot" }
+springCore = { module = "org.springframework:spring-core", version.ref = "spring" }
+springContext = { module = "org.springframework:spring-context", version.ref = "spring" }
+springDoc = { module = "org.springdoc:springdoc-openapi-starter-common", version.ref = "springDoc" }
+springWeb = { module = "org.springframework:spring-web", version.ref = "spring" }
+
+[bundles]
+kotest = ["kotestAssertions", "kotestRunner"]
+spring = ["springCore", "springContext", "springBootAutoConfigure", "springWeb"]
