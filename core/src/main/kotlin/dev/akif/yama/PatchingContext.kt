@@ -1,37 +1,41 @@
 package dev.akif.yama
 
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubtypeOf
 
-data class PatchingContext<Source : Any, Patch : PatchData<Patch>>(val source: Source, val data: PatchData<Patch>) {
-    companion object {
-        private val propertyCache = ConcurrentHashMap<Pair<KClass<*>, String>, KProperty1<*, *>>()
-    }
+private val propertyCache = ConcurrentHashMap<Pair<KClass<*>, String>, KProperty1<*, *>>()
 
+class PatchingContext<Source : Any, Patch : PatchData<Patch>>(
+    private val source: Source,
+    data: PatchData<Patch>
+) {
+    private val klass = source::class
     private val map = data.toMap()
+
     @Suppress("UNCHECKED_CAST")
-    fun <Property> patched(): ReadOnlyProperty<Source?, Property> =
-        ReadOnlyProperty { _, prop ->
-            if (map.containsKey(prop.name)) {
-                map[prop.name] as Property
+    private fun <Source : Any, Property> KClass<Source>.member(property: KProperty<Property>): KProperty1<Source, Property> =
+        declaredMemberProperties
+            .first { it.name == property.name && it.returnType.isSubtypeOf(property.returnType) }
+                as KProperty1<Source, Property>
+
+    @Suppress("UNCHECKED_CAST")
+    fun <Property> patched(property: Source.() -> KProperty<Property>): Property =
+        with (property(source)) {
+            if (map.containsKey(name)) {
+                map[name] as Property
             } else {
-                val klass = source::class as KClass<Source>
-                val sourceProp =
-                    propertyCache[klass to prop.name]
-                        ?.let { it as KProperty1<Source, Property> }
-                        ?: run {
-                            val newSourceProp =
-                                klass
-                                    .declaredMemberProperties
-                                    .first { it.name == prop.name && it.returnType.isSubtypeOf(prop.returnType) } as KProperty1<Source, Property>
-                            propertyCache[klass to prop.name] = newSourceProp
-                            newSourceProp
-                        }
-                sourceProp.get(source)
+                val valueFromMap = propertyCache[klass to name]
+                if (valueFromMap != null) {
+                    valueFromMap as Property
+                } else {
+                    val sourceProperty = klass.member(this) as KProperty1<Source, Property>
+                    propertyCache[klass to name] = sourceProperty
+                    sourceProperty.get(source)
+                }
             }
         }
 }

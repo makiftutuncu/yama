@@ -1,6 +1,6 @@
 # yama `📦 → 🎁`
 
-yama is short for _**Y**et **A**nother **M**utation **Ab**straction_. Coincidentally, it means "patch" in Turkish.
+yama is short for _**Y**et **A**nother **M**utation **A**bstraction_. Coincidentally, it means "patch" in Turkish.
 
 ## Development
 
