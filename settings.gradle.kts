@@ -10,6 +10,7 @@ plugins {
 }
 
 include(":core")
+include(":docs")
 include(":spring")
 include(":example")
 
