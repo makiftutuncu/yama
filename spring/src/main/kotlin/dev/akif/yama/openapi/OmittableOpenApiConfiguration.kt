@@ -19,9 +19,15 @@ import org.springframework.core.type.filter.AssignableTypeFilter
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 
+/**
+ * Autoconfiguration class that enables customizations on OpenAPI models generated for [dev.akif.yama.Omittable] types
+ */
 @AutoConfiguration
 @ConditionalOnClass(OpenAPI::class)
 open class OmittableOpenApiConfiguration {
+    /**
+     * [ModelConverter] that customizes [dev.akif.yama.Omittable] types
+     */
     @Bean
     open fun omittableAwareModelConverter(): ModelConverter =
         object : ModelConverter {
@@ -47,6 +53,9 @@ open class OmittableOpenApiConfiguration {
             }
         }
 
+    /**
+     * [OpenApiCustomizer] that looks for [dev.akif.yama.PatchData] types with [dev.akif.yama.Omittable] properties to customize
+     */
     @Bean
     open fun openApiCustomizer(ctx: ApplicationContext): OpenApiCustomizer =
         OpenApiCustomizer { openApi ->

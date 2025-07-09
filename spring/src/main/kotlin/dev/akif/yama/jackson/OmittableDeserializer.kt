@@ -11,6 +11,10 @@ import com.fasterxml.jackson.databind.node.MissingNode
 import dev.akif.yama.Omittable
 import dev.akif.yama.Omittable.Companion.omitted
 
+/**
+ * [JsonDeserializer] implementation for [Omittable] which makes sure if the value is [dev.akif.yama.Omitted],
+ * it does not appear in the json at all.
+ */
 class OmittableDeserializer<T>(
     private val valueType: JavaType? = null
 ) : JsonDeserializer<Omittable<T?>>(),

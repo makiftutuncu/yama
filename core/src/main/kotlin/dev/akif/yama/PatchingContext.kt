@@ -9,6 +9,15 @@ import kotlin.reflect.full.isSubtypeOf
 
 private val propertyCache = ConcurrentHashMap<Pair<KClass<*>, String>, KProperty1<*, *>>()
 
+/**
+ * Wrapper for the scope where patching occurs
+ *
+ * @param Source Type of the object to patch
+ * @param Patch Type of the data used in patching
+ *
+ * @see [PatchData]
+ * @see [patchUsing]
+ */
 class PatchingContext<Source : Any, Patch : PatchData<Patch>>(
     private val source: Source,
     data: PatchData<Patch>
@@ -22,6 +31,15 @@ class PatchingContext<Source : Any, Patch : PatchData<Patch>>(
             .first { it.name == property.name && it.returnType.isSubtypeOf(property.returnType) }
             as KProperty1<Source, Property>
 
+    /**
+     * Convenience method to get a "patched" value of the source object's property
+     *
+     * @param property Reference to the property of source object
+     *
+     * @param Source Type of the object to patch
+     *
+     * @return Value of the property in patch data if it is present or original value of the property of the source object
+     */
     @Suppress("UNCHECKED_CAST")
     fun <Property> patched(property: Source.() -> KProperty<Property>): Property =
         with(property(source)) {
