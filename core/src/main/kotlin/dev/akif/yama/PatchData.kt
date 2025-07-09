@@ -11,13 +11,18 @@ interface PatchData<Data : PatchData<Data>> {
         return buildMap {
             klass.declaredMemberProperties.forEach { property ->
                 when (val value = property.get(data)) {
-                    is Omittable<*> -> value.whenPresent {
-                        val type = property.returnType.arguments.first().type
-                        require(type?.isMarkedNullable == true || it != null) {
-                            "${property.name} is of type $type but is assigned to null"
+                    is Omittable<*> ->
+                        value.whenPresent {
+                            val type =
+                                property.returnType.arguments
+                                    .first()
+                                    .type
+                            if (type?.isMarkedNullable == false && it == null) {
+                                throw CannotPatchToNullException(property.name, type)
+                            }
+                            put(property.name, it)
                         }
-                        put(property.name, it)
-                    }
+
                     else -> put(property.name, value)
                 }
             }

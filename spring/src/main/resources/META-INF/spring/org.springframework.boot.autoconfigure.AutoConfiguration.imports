@@ -1,0 +1,3 @@
+dev.akif.yama.error.ErrorHandlerConfiguration
+dev.akif.yama.jackson.OmittableObjectMapperConfiguration
+dev.akif.yama.openapi.OmittableOpenApiConfiguration

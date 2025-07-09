@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: yama-example
+  mvc:
+    problemdetails:
+      enabled: true

@@ -8,33 +8,40 @@ import io.swagger.v3.core.converter.ModelConverterContext
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.Schema
 import org.springdoc.core.customizers.OpenApiCustomizer
+import org.springframework.beans.BeanUtils
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
-import org.springframework.context.annotation.Configuration
 import org.springframework.core.type.filter.AssignableTypeFilter
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 
-@Configuration
+@AutoConfiguration
 @ConditionalOnClass(OpenAPI::class)
 open class OmittableOpenApiConfiguration {
     @Bean
     open fun omittableAwareModelConverter(): ModelConverter =
         object : ModelConverter {
-            override fun resolve(type: AnnotatedType, context: ModelConverterContext, chain: Iterator<ModelConverter>): Schema<*>? {
+            override fun resolve(
+                type: AnnotatedType,
+                context: ModelConverterContext,
+                chain: Iterator<ModelConverter>
+            ): Schema<*>? {
                 val javaType = TypeFactory.defaultInstance().constructType(type.type)
-                if (!javaType.rawClass.getSimpleName().equals("Omittable") || !javaType.hasGenericTypes()) {
+
+                if (javaType.rawClass.simpleName != "Omittable" || !javaType.hasGenericTypes()) {
                     return if (chain.hasNext()) chain.next().resolve(type, context, chain) else null
                 }
-                val innerType = javaType.bindings.getBoundType(0)
 
-                return context.resolve(AnnotatedType(innerType)).apply {
-                    nullable = false
-                    description = """Omittable field where, value not being present indicates "leave unchanged", null value indicates "set to null" and non-null value indicates "set to value" behavior"""
-                    required = emptyList()
+                val innerType = javaType.bindings.getBoundType(0)
+                val resolvedInnerSchema = context.resolve(AnnotatedType(innerType))
+
+                return Schema<Any>().apply {
+                    BeanUtils.copyProperties(resolvedInnerSchema, this)
+                    description = """Omittable field. Not present = unchanged. null = set null. non-null = set value."""
                     readOnly = true
                 }
             }
@@ -65,12 +72,10 @@ open class OmittableOpenApiConfiguration {
                     @Suppress("UNCHECKED_CAST")
                     clazz.kotlin as? KClass<PatchData<*>>
                 }
-            }
-            .associateBy { it.simpleName.orEmpty() }
+            }.associateBy { it.simpleName.orEmpty() }
     }
 
-    private fun <T> Schema<T>.hasOmittableProperty(): Boolean =
-        readOnly == true && description?.contains("Omittable") == true
+    private fun <T> Schema<T>.hasOmittableProperty(): Boolean = readOnly == true && description?.contains("Omittable") == true
 
     private fun <T : Any> KClass<T>.hasOmittableNullable(name: String): Boolean {
         if (this.simpleName != "Omittable") return false

@@ -11,11 +11,16 @@ import com.fasterxml.jackson.databind.node.MissingNode
 import dev.akif.yama.Omittable
 import dev.akif.yama.Omittable.Companion.omitted
 
-class OmittableDeserializer<T>(private val valueType: JavaType? = null) : JsonDeserializer<Omittable<T?>>(),
+class OmittableDeserializer<T>(
+    private val valueType: JavaType? = null
+) : JsonDeserializer<Omittable<T?>>(),
     ContextualDeserializer {
     private val nullValue = Omittable.Companion.present(null)
 
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Omittable<T?> {
+    override fun deserialize(
+        p: JsonParser,
+        ctxt: DeserializationContext
+    ): Omittable<T?> {
         val codec = p.codec
         val node = codec.readTree<JsonNode>(p)
         @Suppress("UNCHECKED_CAST")
@@ -25,13 +30,14 @@ class OmittableDeserializer<T>(private val valueType: JavaType? = null) : JsonDe
         }
     }
 
-    override fun getNullValue(ctxt: DeserializationContext?): Omittable<T?> =
-        nullValue
+    override fun getNullValue(ctxt: DeserializationContext?): Omittable<T?> = nullValue
 
-    override fun getAbsentValue(ctxt: DeserializationContext?): Any? =
-        omitted
+    override fun getAbsentValue(ctxt: DeserializationContext?): Any? = omitted
 
-    override fun createContextual(ctxt: DeserializationContext, property: BeanProperty?): JsonDeserializer<*> {
+    override fun createContextual(
+        ctxt: DeserializationContext,
+        property: BeanProperty?
+    ): JsonDeserializer<*> {
         val wrapperType = property?.type ?: ctxt.contextualType
         val valueType = wrapperType.containedType(0)
         return OmittableDeserializer<T>(valueType)

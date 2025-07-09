@@ -9,9 +9,9 @@ private val presentTestValues = listOf(true, 1, 2L, 3.0, 'a', "foo", null as Str
 
 private val alternativeTestValues = listOf(false, 0, 0L, 0.0, ' ', "", "null")
 
-class OmittableTest : WordSpec({
-    "Omittable" When {
-        "constructing" should {
+class OmittableTest :
+    WordSpec({
+        "constructing an omittable" should {
             "return present values" {
                 presentTestValues.forEach {
                     Omittable.present(it).apply { isPresent shouldBe true }
@@ -27,7 +27,7 @@ class OmittableTest : WordSpec({
             "return omitted value" { Omittable.omitted.apply { isOmitted shouldBe true } }
         }
 
-        "getting or providing an alternative" should {
+        "getting or providing an alternative for an omittable" should {
             "return the value when it is present" {
                 (presentTestValues zip alternativeTestValues).forEach { (value, alternative) ->
                     Omittable.present(value).getOrElse { alternative } shouldBe value
@@ -39,7 +39,7 @@ class OmittableTest : WordSpec({
             }
         }
 
-        "getting or throwing" should {
+        "getting or throwing for an omittable" should {
             "return the value when it is present" {
                 presentTestValues.forEach { Omittable.present(it).getOrThrow() shouldBe it }
             }
@@ -50,7 +50,7 @@ class OmittableTest : WordSpec({
             }
         }
 
-        "checking if present" should {
+        "checking if an omittable is present" should {
             "return true for present values" {
                 presentTestValues.forEach { Omittable.present(it).isPresent shouldBe true }
             }
@@ -58,7 +58,7 @@ class OmittableTest : WordSpec({
             "return false for omitted value" { Omitted.isPresent shouldBe false }
         }
 
-        "checking if omitted" should {
+        "checking if an omittable is omitted" should {
             "return false for present values" {
                 presentTestValues.forEach { Omittable.present(it).isOmitted shouldBe false }
             }
@@ -66,7 +66,7 @@ class OmittableTest : WordSpec({
             "return true for omitted value" { Omitted.isOmitted shouldBe true }
         }
 
-        "running a side effect when present" should {
+        "running a side effect with whenPresent for an omittable" should {
             "run for present values" {
                 var counter = 0
                 presentTestValues.forEach { Omittable.present(it).whenPresent { counter++ } }
@@ -80,7 +80,7 @@ class OmittableTest : WordSpec({
             }
         }
 
-        "running a side effect when omitted" should {
+        "running a side effect with whenOmitted for an omittable" should {
             "run for omitted value" {
                 var counter = 0
                 Omitted.whenOmitted { counter++ }
@@ -93,5 +93,4 @@ class OmittableTest : WordSpec({
                 counter shouldBe 0
             }
         }
-    }
-})
+    })

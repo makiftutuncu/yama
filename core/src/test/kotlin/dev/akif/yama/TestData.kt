@@ -3,7 +3,7 @@ package dev.akif.yama
 data class Address(
     val street: String,
     val postalCode: String?,
-    val number: String?,
+    val number: String?
 )
 
 data class User(
@@ -16,10 +16,10 @@ data class PatchAddress(
     val street: Omittable<String>,
     val postalCode: Omittable<String?>,
     val number: Omittable<String?>
-): PatchData<PatchAddress>
+) : PatchData<PatchAddress>
 
 data class PatchUser(
     val email: String,
     val name: Omittable<String?>,
     val address: Omittable<PatchAddress?>
-): PatchData<PatchUser>
+) : PatchData<PatchUser>

@@ -1,8 +1,10 @@
 [versions]
 kotlin = "2.2.0"
 kotest = "5.9.1"
+ktlint = "13.0.0"
 spring = "6.2.8"
 springBoot = "3.5.3"
+springDependencyManagement = "1.1.7"
 springDoc = "2.8.9"
 
 [libraries]
@@ -18,3 +20,6 @@ springWeb = { module = "org.springframework:spring-web", version.ref = "spring" 
 [bundles]
 kotest = ["kotestAssertions", "kotestRunner"]
 spring = ["springCore", "springContext", "springBootAutoConfigure", "springWeb"]
+
+[plugins]
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }

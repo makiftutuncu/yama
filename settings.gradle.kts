@@ -11,5 +11,6 @@ plugins {
 
 include(":core")
 include(":spring")
+include(":example")
 
 rootProject.name = "yama"

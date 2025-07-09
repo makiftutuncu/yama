@@ -20,22 +20,23 @@ class PatchingContext<Source : Any, Patch : PatchData<Patch>>(
     private fun <Source : Any, Property> KClass<Source>.member(property: KProperty<Property>): KProperty1<Source, Property> =
         declaredMemberProperties
             .first { it.name == property.name && it.returnType.isSubtypeOf(property.returnType) }
-                as KProperty1<Source, Property>
+            as KProperty1<Source, Property>
 
     @Suppress("UNCHECKED_CAST")
     fun <Property> patched(property: Source.() -> KProperty<Property>): Property =
-        with (property(source)) {
+        with(property(source)) {
             if (map.containsKey(name)) {
-                map[name] as Property
-            } else {
-                val valueFromMap = propertyCache[klass to name]
+                return@with map[name] as Property
+            }
+            val valueFromMap = propertyCache[klass to name]
+            val propertyToUse =
                 if (valueFromMap != null) {
-                    valueFromMap as Property
+                    valueFromMap as KProperty1<Source, Property>
                 } else {
                     val sourceProperty = klass.member(this) as KProperty1<Source, Property>
                     propertyCache[klass to name] = sourceProperty
-                    sourceProperty.get(source)
+                    sourceProperty
                 }
-            }
+            propertyToUse.get(source)
         }
 }

@@ -3,12 +3,10 @@ package dev.akif.yama
 sealed interface Omittable<out T : Any?> {
     companion object {
         @JvmStatic
-        fun <T> present(value: T): Omittable<T> =
-            Present(value)
+        fun <T> present(value: T): Omittable<T> = Present(value)
 
         @JvmStatic
-        val omitted: Omittable<Nothing> =
-            Omitted
+        val omitted: Omittable<Nothing> = Omitted
     }
 
     fun getOrThrow(): T
@@ -33,16 +31,17 @@ sealed interface Omittable<out T : Any?> {
 }
 
 @JvmInline
-value class Present<out T : Any?>(val value: T): Omittable<T> {
+value class Present<out T : Any?>(
+    val value: T
+) : Omittable<T> {
     override fun getOrThrow(): T = value
 }
 
-data object Omitted: Omittable<Nothing> {
+data object Omitted : Omittable<Nothing> {
     override fun getOrThrow(): Nothing = throw NoSuchElementException("Cannot get an omitted value")
 }
 
-fun <T> T.present(): Present<T> =
-    Present(this)
+fun <T> T.present(): Present<T> = Present(this)
 
 fun <T> Omittable<T>.getOrElse(alternative: () -> T): T =
     when (this) {
