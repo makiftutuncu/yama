@@ -32,15 +32,10 @@ data class UserEntity(
         if (other == null) return false
         if (this.klass != other.klass) return false
         other as UserEntity
-        return id == other.id &&
-            email == other.email &&
-            name == other.name &&
-            dateOfBirth == other.dateOfBirth &&
-            createdAt == other.createdAt &&
-            updatedAt == other.updatedAt
+        return id == other.id
     }
 
-    final override fun hashCode(): Int = Objects.hash(id, email, name, dateOfBirth, createdAt, updatedAt)
+    final override fun hashCode(): Int = Objects.hash(id)
 
     override fun toString(): String =
         "User(id=$id, email=$email, name=$name, dateOfBirth=$dateOfBirth, createdAt=$createdAt, updatedAt=$updatedAt)"
