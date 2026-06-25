@@ -4,7 +4,7 @@ kotlin = "2.2.0"
 kotest = "5.9.1"
 ktlint = "13.0.0"
 spring = "6.2.8"
-springBoot = "3.5.3"
+springBoot = "3.5.16"
 springDependencyManagement = "1.1.7"
 springDoc = "2.8.9"
 
