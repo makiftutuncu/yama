@@ -6,7 +6,7 @@ ktlint = "13.0.0"
 spring = "6.2.8"
 springBoot = "3.5.3"
 springDependencyManagement = "1.1.7"
-springDoc = "2.8.9"
+springDoc = "2.9.0"
 
 [libraries]
 dokkaPlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
