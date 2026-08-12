@@ -1,7 +1,7 @@
 [versions]
 dokka = "2.0.0"
 kotlin = "2.2.0"
-kotest = "5.9.1"
+kotest = "6.2.4"
 ktlint = "13.0.0"
 spring = "6.2.8"
 springBoot = "3.5.3"
